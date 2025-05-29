@@ -1,8 +1,10 @@
 package com.example.Driver_Vehicle.Management.System.exceptions.golableExecption;
 
+import com.example.Driver_Vehicle.Management.System.exceptions.AlreadyAssignedException;
 import com.example.Driver_Vehicle.Management.System.exceptions.NotFoundExecption;
 import com.example.Driver_Vehicle.Management.System.exceptions.RequestFailedExecption;
 import com.example.Driver_Vehicle.Management.System.response_api.ResponseApi;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,6 +27,25 @@ public class GloableExecptionHandler {
                 .status(HttpStatus.BAD_REQUEST.value())
                 .build();
         return  new ResponseEntity<>(responseApi,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(AlreadyAssignedException.class)
+    public ResponseEntity<ResponseApi<Object>> notFoundExecption(AlreadyAssignedException exp){
+        ResponseApi<Object> responseApi=ResponseApi.builder()
+                .message(exp.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+        return  new ResponseEntity<>(responseApi,HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ResponseApi<String>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return new ResponseEntity<>(
+                ResponseApi.<String>builder()
+                        .status(HttpStatus.BAD_REQUEST.value())
+                        .message("Driver or Vehicle already assigned.")
+                        .data(null)
+                        .build(),
+                HttpStatus.BAD_REQUEST
+        );
     }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseApi<Object>> handleAllExceptions(Exception ex) {

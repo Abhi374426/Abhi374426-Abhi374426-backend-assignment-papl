@@ -6,6 +6,7 @@ import com.example.Driver_Vehicle.Management.System.dtos.responsedto.DriverVehic
 import com.example.Driver_Vehicle.Management.System.entity.DriverVehicleMapping;
 import com.example.Driver_Vehicle.Management.System.entity.Drivers;
 import com.example.Driver_Vehicle.Management.System.entity.Vehicles;
+import com.example.Driver_Vehicle.Management.System.exceptions.AlreadyAssignedException;
 import com.example.Driver_Vehicle.Management.System.exceptions.NotFoundExecption;
 import com.example.Driver_Vehicle.Management.System.repository.DriverRepository;
 import com.example.Driver_Vehicle.Management.System.repository.DriverVehicleMappingRepository;
@@ -33,6 +34,7 @@ public class DriverVehicleMappingServiceImpl implements DriverVehicleMappingServ
 
     @Override
     public DriverVehiclesMappingResponse addDetails(DriverVehiclesMappingRequest dto) {
+        dto.validate();
         Drivers driver = driverRepository.findById(dto.getDriverCode())
                 .orElseThrow(() -> new NotFoundExecption(Messages.DRIVER + Messages.ONE_SPACE + Messages.NOT_FOUND));
 
@@ -47,15 +49,15 @@ public class DriverVehicleMappingServiceImpl implements DriverVehicleMappingServ
 
     @Override
     public List<Vehicles> getVehiclesOlderThan5YearsWithNewLicenseDrivers() {
-        LocalDate minDate=LocalDate.now().minusYears(5);
-           List<DriverVehicleMapping> vehicles=  driverVehicleMappingRepository.findByVehicle_ManufactureDateLessThanEqual(minDate);
-         return vehicles.stream()
-                  .filter(driverVehicleMapping -> {
-                      LocalDate expiryDate = driverVehicleMapping.getDrivers().getLicenceExpiryDate();
-                      LocalDate issueDate = expiryDate.minusYears(20);
-                      return issueDate.isAfter(LocalDate.now().minusYears(3));
-                  }).map(DriverVehicleMapping::getVehicle)
-                  .collect(Collectors.toList());
+        LocalDate minDate = LocalDate.now().minusYears(5);
+        List<DriverVehicleMapping> vehicles = driverVehicleMappingRepository.findByVehicle_ManufactureDateLessThanEqual(minDate);
+        return vehicles.stream()
+                .filter(driverVehicleMapping -> {
+                    LocalDate expiryDate = driverVehicleMapping.getDrivers().getLicenceExpiryDate();
+                    LocalDate issueDate = expiryDate.minusYears(20);
+                    return issueDate.isAfter(LocalDate.now().minusYears(3));
+                }).map(DriverVehicleMapping::getVehicle)
+                .collect(Collectors.toList());
 
     }
 }
