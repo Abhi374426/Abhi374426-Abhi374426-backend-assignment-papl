@@ -38,15 +38,27 @@ public class GloableExecptionHandler {
     }
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ResponseApi<String>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        String rootMessage = ex.getRootCause() != null ? ex.getRootCause().getMessage() : ex.getMessage();
+        String userMessage;
+
+        if (rootMessage != null && rootMessage.contains("LICENCE_NUMBER")) {
+            userMessage = "Driver licence number already exists.";
+        } else if (rootMessage != null && rootMessage.contains("VEHICLE_NUMBER")) {
+            userMessage = "Vehicle number already exists.";
+        } else {
+            userMessage = "Data integrity violation: " + rootMessage;
+        }
+
         return new ResponseEntity<>(
                 ResponseApi.<String>builder()
                         .status(HttpStatus.BAD_REQUEST.value())
-                        .message("Driver or Vehicle already assigned.")
+                        .message(userMessage)
                         .data(null)
                         .build(),
                 HttpStatus.BAD_REQUEST
         );
     }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseApi<Object>> handleAllExceptions(Exception ex) {
 

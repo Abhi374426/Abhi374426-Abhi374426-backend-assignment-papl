@@ -24,9 +24,8 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverResponseDto addDriverDetails(DriverRequestDto driverRequestDto) {
         driverRequestDto.validate();
-        if (driverRepository.existsById(driverRequestDto.getDriverCode())) {
+        if (driverRepository.existsById(driverRequestDto.getDriverCode()))
             throw new AlreadyAssignedException(Messages.DRIVER + ": Already exists details");
-        }
         Drivers drivers = DriverTransformer.dtoToObj(driverRequestDto);
         return DriverTransformer.objToDto(driverRepository.save(drivers));
     }
