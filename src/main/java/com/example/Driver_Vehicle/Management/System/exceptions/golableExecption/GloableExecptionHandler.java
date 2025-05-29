@@ -32,9 +32,9 @@ public class GloableExecptionHandler {
     public ResponseEntity<ResponseApi<Object>> notFoundExecption(AlreadyAssignedException exp){
         ResponseApi<Object> responseApi=ResponseApi.builder()
                 .message(exp.getMessage())
-                .status(HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.CONFLICT.value())
                 .build();
-        return  new ResponseEntity<>(responseApi,HttpStatus.BAD_REQUEST);
+        return  new ResponseEntity<>(responseApi,HttpStatus.CONFLICT);
     }
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ResponseApi<String>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {

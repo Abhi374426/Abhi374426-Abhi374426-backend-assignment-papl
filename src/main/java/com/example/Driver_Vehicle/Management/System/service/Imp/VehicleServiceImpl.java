@@ -1,8 +1,10 @@
 package com.example.Driver_Vehicle.Management.System.service.Imp;
 
+import com.example.Driver_Vehicle.Management.System.contstant.Messages;
 import com.example.Driver_Vehicle.Management.System.dtos.requestdto.VehiclesRequestDto;
 import com.example.Driver_Vehicle.Management.System.dtos.responsedto.VehiclesResponseDto;
 import com.example.Driver_Vehicle.Management.System.entity.Vehicles;
+import com.example.Driver_Vehicle.Management.System.exceptions.AlreadyAssignedException;
 import com.example.Driver_Vehicle.Management.System.repository.VehicleRepository;
 import com.example.Driver_Vehicle.Management.System.service.VehicleService;
 import com.example.Driver_Vehicle.Management.System.transformer.VehiclesTransformer;
@@ -19,17 +21,21 @@ import java.util.stream.Collectors;
 public class VehicleServiceImpl implements VehicleService {
     @Autowired
     private VehicleRepository vehicleRepository;
+
     @Override
     public VehiclesResponseDto addVehicleDetails(VehiclesRequestDto requestDto) {
-        Vehicles vehicles= VehiclesTransformer.dtoToObj(requestDto);
-        return VehiclesTransformer.objToDto( vehicleRepository.save(vehicles));
+        requestDto.validate();
+        if (vehicleRepository.existsById(requestDto.getVehicleNumber()))
+            throw new AlreadyAssignedException(Messages.VEHICLE + "Details already exists");
+        Vehicles vehicles = VehiclesTransformer.dtoToObj(requestDto);
+        return VehiclesTransformer.objToDto(vehicleRepository.save(vehicles));
     }
 
     @Override
     public List<VehiclesResponseDto> getVehiclesOlderThanFiveYears() {
-      LocalDate minDate=LocalDate.now().minusYears(5);
-    List<Vehicles> vehicles= vehicleRepository.findByManufactureDateBefore(minDate);
-    return vehicles.stream().map(VehiclesTransformer::objToDto).collect(Collectors.toList());
+        LocalDate minDate = LocalDate.now().minusYears(5);
+        List<Vehicles> vehicles = vehicleRepository.findByManufactureDateBefore(minDate);
+        return vehicles.stream().map(VehiclesTransformer::objToDto).collect(Collectors.toList());
     }
 
 }
