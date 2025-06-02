@@ -2,7 +2,9 @@ package com.example.Driver_Vehicle.Management.System.controller;
 
 import com.example.Driver_Vehicle.Management.System.contstant.Messages;
 import com.example.Driver_Vehicle.Management.System.dtos.requestdto.DriverRequestDto;
+import com.example.Driver_Vehicle.Management.System.dtos.requestdto.SearchDto;
 import com.example.Driver_Vehicle.Management.System.dtos.responsedto.DriverResponseDto;
+import com.example.Driver_Vehicle.Management.System.entity.Drivers;
 import com.example.Driver_Vehicle.Management.System.response_api.ResponseApi;
 import com.example.Driver_Vehicle.Management.System.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,16 @@ public class DriverController {
                 .build();
         return new ResponseEntity<>(responseApi,HttpStatus.OK);
     }
+    @GetMapping("/search")
+    public ResponseEntity<ResponseApi<List<Drivers>>> findByLicenceExpiryDateBetweenAndOptionalName(@RequestBody SearchDto searchDto) {
+        ResponseApi<List<Drivers>> responseApi=ResponseApi.<List<Drivers>>builder()
+                .message(Messages.SUCCESS)
+                .status(HttpStatus.OK.value())
+                .data(driverService.findByLicenceExpiryDateBetweenAndOptionalName(searchDto))
+                .build();
+        return new ResponseEntity<>(responseApi,HttpStatus.OK);
+    }
+
 
 
 }

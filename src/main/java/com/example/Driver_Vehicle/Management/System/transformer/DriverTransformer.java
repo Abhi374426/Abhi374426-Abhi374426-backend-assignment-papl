@@ -9,7 +9,7 @@ public class DriverTransformer {
     public static Drivers  dtoToObj(DriverRequestDto requestDto){
             return    Drivers.builder()
                        .driverCode(requestDto.getDriverCode())
-                       .driverName(requestDto.getDriverName())
+                       .driverName(requestDto.getTrimmedDriverName())
                        .licenceNumber(requestDto.getLicenceNumber())
                        .licenceExpiryDate(requestDto.getLicenceExpiryDate())
                        .build();

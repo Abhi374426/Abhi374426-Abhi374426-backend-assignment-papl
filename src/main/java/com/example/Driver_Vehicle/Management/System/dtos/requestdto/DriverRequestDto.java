@@ -16,6 +16,10 @@ public class DriverRequestDto {
     private String licenceNumber;
 
     private LocalDate licenceExpiryDate;
+
+    public String getTrimmedDriverName() {
+        return driverName != null ? driverName.trim() : null;
+    }
     public  void validate(){
 
             if (driverCode == null || driverCode.trim().isEmpty()) {
